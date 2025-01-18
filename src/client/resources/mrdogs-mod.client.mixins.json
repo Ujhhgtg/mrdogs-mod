@@ -1,0 +1,35 @@
+{
+  "required": true,
+  "package": "dev.ujhhgtg.mrdogsmod.mixin.client",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "BlockClientMixin",
+    "ChatScreenClientMixin",
+    "ClickableWidgetClientMixin",
+    "ClientPlayerEntityClientMixin",
+    "CobwebBlockClientMixin",
+    "CrashReportClientMixin",
+    "DeathScreenClientMixin",
+    "EntityClientMixin",
+    "EntityRendererClientMixin",
+    "HandledScreenClientMixin",
+    "ItemClientMixin",
+    "ItemRendererClientMixin",
+    "ItemStackClientMixin",
+    "KeyboardInputClientMixin",
+    "LivingEntityClientMixin",
+    "LivingEntityRendererClientMixin",
+    "MinecraftClientClientMixin",
+    "PlayerEntityClientMixin",
+    "PlayerEntityRendererClientMixin",
+    "PlayerInventoryClientMixin",
+    "ScreenClientMixin",
+    "SplashTextResourceSupplierClientMixin",
+    "TranslationStorageClientMixin",
+    "WorldRendererClientMixin",
+    "WolfEntityModelAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+	}
+}
