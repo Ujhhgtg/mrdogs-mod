@@ -6,7 +6,7 @@ Minecraft: 1.12.4 <br>
 Fabric Mod Loader: >= 0.16.10 <br>
 Fabric API: latest
 
-## Installtion
+## Installation
 ### 1a. Compile yourself
 1. `git clone https://github.com/Ujhhgtg/mrdogs-mod.git`
 2. Linux only: `chmod +x ./gradlew`

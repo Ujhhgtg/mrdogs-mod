@@ -103,9 +103,6 @@ public abstract class LivingEntityRendererClientMixin<T extends LivingEntity, S 
             return;
         }
 
-        this.mrdogs_mod$getWolfEntityRenderState().yawDegrees = livingEntityRenderState.yawDegrees;
-        this.mrdogs_mod$getWolfEntityRenderState().pitch = livingEntityRenderState.pitch;
-
         this.mrdogs_mod$getWolfEntityModel().setAngles(this.mrdogs_mod$getWolfEntityRenderState());
 
         ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getLeftFrontLeg().pitch = ((PlayerEntityModel) instance).leftLeg.pitch;
@@ -118,6 +115,8 @@ public abstract class LivingEntityRendererClientMixin<T extends LivingEntity, S 
         ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getRightHindLeg().yaw = ((PlayerEntityModel) instance).rightLeg.yaw;
         // i don't know how minecraft generates this value so i'm just taking a similar one
         ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getTail().yaw = ((PlayerEntityModel) instance).leftLeg.pitch * 0.7F;
+        ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getHead().pitch = livingEntityRenderState.pitch * ((float)Math.PI / 180F);
+        ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getHead().yaw = livingEntityRenderState.yawDegrees * ((float)Math.PI / 180F);
 
         this.mrdogs_mod$getWolfEntityModel().render(matrixStack, vertexConsumer, i, j, l);
         this.wolfArmorFeatureRenderer.render(matrixStack, vertexConsumerProvider, i, this.mrdogs_mod$getWolfEntityRenderState(), this.mrdogs_mod$getWolfEntityRenderState().yawDegrees, this.mrdogs_mod$getWolfEntityRenderState().pitch);
