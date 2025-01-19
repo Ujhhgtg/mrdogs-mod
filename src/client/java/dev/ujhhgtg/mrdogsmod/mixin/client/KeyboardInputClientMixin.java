@@ -8,8 +8,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.IS_IN_COBWEB;
-import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.IS_SNEAKING;
+import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.*;
 
 @Mixin(KeyboardInput.class)
 public abstract class KeyboardInputClientMixin extends Input {
@@ -29,8 +28,9 @@ public abstract class KeyboardInputClientMixin extends Input {
             this.movementSideways = 0;
         }
 
-        IS_SNEAKING = this.playerInput.sneak();
-
-        this.playerInput = new PlayerInput(this.playerInput.forward(), this.playerInput.backward(), this.playerInput.left(), this.playerInput.right(), this.playerInput.jump(), false, this.playerInput.sprint());
+        if (MC.player != null && !MC.player.getAbilities().flying && !MC.player.isRiding()) {
+            IS_SNEAKING = this.playerInput.sneak();
+            this.playerInput = new PlayerInput(this.playerInput.forward(), this.playerInput.backward(), this.playerInput.left(), this.playerInput.right(), this.playerInput.jump(), false, this.playerInput.sprint());
+        }
     }
 }

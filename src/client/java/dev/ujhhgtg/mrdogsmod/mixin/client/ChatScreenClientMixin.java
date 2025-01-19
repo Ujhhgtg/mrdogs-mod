@@ -1,13 +1,13 @@
 package dev.ujhhgtg.mrdogsmod.mixin.client;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.resource.language.I18n;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.CONFIG;
 
@@ -17,13 +17,14 @@ public abstract class ChatScreenClientMixin extends Screen {
         super(title);
     }
 
-    @Inject(method = "insertText", at = @At("HEAD"))
-    protected void insertText(String text, boolean override, CallbackInfo ci) {
+    @ModifyArg(method = "sendMessage", at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/client/network/ClientPlayNetworkHandler;sendChatMessage(Ljava/lang/String;)V"))
+    protected String sendMessage(String content) {
         if (!CONFIG.morphToWolf()) {
-            return;
+            return content;
         }
 
-        // noinspection UnusedAssignment
-        text = I18n.translate("text.mrdogs-mod.woof").repeat(text.length()).trim();
+        return I18n.translate("text.mrdogs-mod.woof").repeat(content.length()).trim();
     }
 }
