@@ -30,7 +30,7 @@ public abstract class ClickableWidgetClientMixin {
             return;
         }
 
-        if (Objects.equals(widget.getMessage(), SURRENDER_TEXT)) {
+        if (widget.getMessage() == SURRENDER_TEXT) {
             return;
         }
 

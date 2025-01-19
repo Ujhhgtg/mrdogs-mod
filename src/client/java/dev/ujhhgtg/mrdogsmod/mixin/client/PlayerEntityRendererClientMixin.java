@@ -9,38 +9,49 @@ import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.CONFIG;
+import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.MC;
 
 @Mixin(PlayerEntityRenderer.class)
-public abstract class PlayerEntityRendererClientMixin extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityRenderState, PlayerEntityModel> {
+public abstract class PlayerEntityRendererClientMixin extends LivingEntityRenderer<AbstractClientPlayerEntity, PlayerEntityRenderState, PlayerEntityModel> implements EntityRendererAccessor<AbstractClientPlayerEntity, PlayerEntityRenderState> {
     public PlayerEntityRendererClientMixin(EntityRendererFactory.Context ctx, PlayerEntityModel model, float shadowRadius) {
         super(ctx, model, shadowRadius);
     }
 
-    @Inject(method = "renderLeftArm", at = @At("HEAD"), cancellable = true)
-    public void renderLeftArm(CallbackInfo ci) {
-        if (CONFIG.morphToWolf()) {
-            ci.cancel();
-        }
+    @Inject(method = "<init>", at = @At("TAIL"))
+    private void init(CallbackInfo info) {
+        this.features.clear();
     }
 
-    @Inject(method = "renderRightArm", at = @At("HEAD"), cancellable = true)
-    public void renderRightArm(CallbackInfo ci) {
-        if (CONFIG.morphToWolf()) {
-            ci.cancel();
+    @Inject(method = "renderArm", at = @At("HEAD"), cancellable = true)
+    public void renderArm(CallbackInfo ci) {
+        if (!shouldMorphToWolf()) {
+            return;
         }
+
+        ci.cancel();
     }
 
     @ModifyReturnValue(method = "getTexture(Lnet/minecraft/client/render/entity/state/PlayerEntityRenderState;)Lnet/minecraft/util/Identifier;", at = @At("RETURN"))
     public Identifier getTexture(Identifier original) {
-        if (!CONFIG.morphToWolf()) {
+        if (!shouldMorphToWolf()) {
             return original;
         }
 
         return Identifier.ofVanilla("textures/entity/wolf/wolf_tame.png");
+    }
+
+    @Unique
+    private boolean shouldMorphToWolf() {
+        if (MC.player == null) {
+            return false;
+        }
+
+        return CONFIG.morphToWolf() && this.getState().name.equals(MC.player.getGameProfile().getName());
     }
 }

@@ -2,10 +2,12 @@ package dev.ujhhgtg.mrdogsmod.mixin.client;
 
 import dev.ujhhgtg.mrdogsmod.Utils;
 import io.wispforest.owo.config.ui.ConfigScreen;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.AbstractParentElement;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
 import net.minecraft.client.gui.Selectable;
+import net.minecraft.client.gui.screen.ChatScreen;
 import net.minecraft.client.gui.screen.DeathScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
@@ -35,6 +37,11 @@ public abstract class ScreenClientMixin extends AbstractParentElement implements
     @Shadow
     protected abstract void refreshWidgetPositions();
 
+    @Inject(method = "<init>", at = @At("CTOR_HEAD"))
+    private void ctor(CallbackInfo ci) {
+        LOGGER.info(this.getClass().getName());
+    }
+
     @Inject(method = "addDrawableChild", at = @At("TAIL"))
     private <T extends Element & Drawable & Selectable> void onAddDrawableChild(T drawableElement, CallbackInfoReturnable<T> cir) {
         if (!CONFIG.randomizeWidgets()) {
@@ -42,6 +49,10 @@ public abstract class ScreenClientMixin extends AbstractParentElement implements
         }
 
         if (!(drawableElement instanceof Widget widget)) {
+            return;
+        }
+
+        if (((Object) this) instanceof ChatScreen) {
             return;
         }
 
@@ -58,6 +69,10 @@ public abstract class ScreenClientMixin extends AbstractParentElement implements
             return;
         }
 
+        if (((Object) this) instanceof ChatScreen) {
+            return;
+        }
+
         Utils.randomizeWidgetLocation(widget);
     }
 
@@ -68,6 +83,10 @@ public abstract class ScreenClientMixin extends AbstractParentElement implements
         }
 
         if (!(child instanceof Widget widget)) {
+            return;
+        }
+
+        if (((Object) this) instanceof ChatScreen) {
             return;
         }
 
@@ -98,8 +117,12 @@ public abstract class ScreenClientMixin extends AbstractParentElement implements
             }
         }
 
+        if (!FabricLoader.getInstance().isDevelopmentEnvironment()) {
+            return;
+        }
+
         // noinspection ConstantValue
-        if (!((Object) this instanceof DeathScreen)) {
+        if (!((Object) this instanceof DeathScreen) && !((Object) this instanceof ChatScreen)) {
             this.addDrawableChild(new ButtonWidget.Builder(Text.literal("Show Fake Death"), button ->
                     MC.execute(() -> MC.setScreen(new DeathScreen(Text.literal("###FAKE_DEATH_SCREEN###"), false))))
                     .position(5, 35)
@@ -108,12 +131,84 @@ public abstract class ScreenClientMixin extends AbstractParentElement implements
         }
 
         // noinspection ConstantValue
-        if (!((Object) this instanceof ConfigScreen)) {
+        if (!((Object) this instanceof DeathScreen) && !((Object) this instanceof ChatScreen) && !((Object) this instanceof ConfigScreen)) {
             this.addDrawableChild(new ButtonWidget.Builder(Text.literal("Show Config Screen"), button ->
                     MC.execute(() -> MC.setScreen(ConfigScreen.create(CONFIG, MC.currentScreen))))
                     .position(5, 65)
                     .size(120, 20)
                     .build());
         }
+
+        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("yRotation + 0.05f"), button ->
+                Y_ROTATION += 10f)
+                .position(5, 95)
+                .size(80, 20)
+                .build());
+
+        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("yRotation - 0.05f"), button ->
+                Y_ROTATION -= 10f)
+                .position(5, 125)
+                .size(80, 20)
+                .build());
+
+        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("xRotation + 0.05f"), button ->
+                X_ROTATION += 10f)
+                .position(5, 155)
+                .size(80, 20)
+                .build());
+
+        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("xRotation - 0.05f"), button ->
+                X_ROTATION -= 10f)
+                .position(5, 185)
+                .size(80, 20)
+                .build());
+
+        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("xMove + 0.05f"), button ->
+                X_MOVE += 0.05f)
+                .position(5, 215)
+                .size(80, 20)
+                .build());
+
+        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("xMove - 0.05f"), button ->
+                X_MOVE -= 0.05f)
+                .position(5, 245)
+                .size(80, 20)
+                .build());
+
+        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("yMove + 0.05f"), button ->
+                Y_MOVE += 0.05f)
+                .position(5, 275)
+                .size(80, 20)
+                .build());
+
+        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("yMove - 0.05f"), button ->
+                Y_MOVE -= 0.05f)
+                .position(5, 305)
+                .size(80, 20)
+                .build());
+
+        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("zMove + 0.05f"), button ->
+                Z_MOVE += 0.05f)
+                .position(5, 335)
+                .size(80, 20)
+                .build());
+
+        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("zMove - 0.05f"), button ->
+                Z_MOVE -= 0.05f)
+                .position(5, 365)
+                .size(80, 20)
+                .build());
+
+        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("zRot + 10f"), button ->
+                Z_ROTATION += 10f)
+                .position(5, 395)
+                .size(80, 20)
+                .build());
+
+        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("zRot - 10f"), button ->
+                Z_ROTATION -= 10f)
+                .position(5, 425)
+                .size(80, 20)
+                .build());
     }
 }

@@ -1,4 +1,5 @@
 {
+  "text.configmrdogs—config.title": "Mr. Dog's Mod Config",
   "text.config.mrdogs-config.option.blindnessActivationFrequency": "Blindness Effect Activation Frequency",
   "text.config.mrdogs-config.option.blindnessActivationFrequency.tooltip": "The effect is activated every <value> seconds. Set to -1 to disable.",
   "text.config.mrdogs-config.option.morphToWolf": "Morph to Wolf",

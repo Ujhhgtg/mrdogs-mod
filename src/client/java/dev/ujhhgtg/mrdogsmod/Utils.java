@@ -2,13 +2,21 @@ package dev.ujhhgtg.mrdogsmod;
 
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.Widget;
+import net.minecraft.client.model.ModelPart;
+import net.minecraft.client.render.OverlayTexture;
+import net.minecraft.client.render.VertexConsumerProvider;
+import net.minecraft.client.render.item.ItemRenderState;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.passive.WolfEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.math.RotationAxis;
 
 import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.*;
 
@@ -53,7 +61,7 @@ public class Utils {
             return;
         }
 
-        // sometimes the second argument of nextInt() is smaller than 0 but i'm not going to try to figure out why
+        // sometimes the second argument of nextInt() is smaller than 0 but light'm not going to try to figure out why
         widget.setX(RANDOM.nextInt(0, Math.max(MC.getWindow().getScaledWidth() - widget.getWidth(), 0) + 1));
         widget.setY(RANDOM.nextInt(0, Math.max(MC.getWindow().getScaledHeight() - widget.getHeight(), 0) + 1));
     }
@@ -89,5 +97,32 @@ public class Utils {
     public static int scale(int value, int scaleFactor) {
         int i = (int)((double)value / scaleFactor);
         return (double)value / scaleFactor > (double)i ? i + 1 : i;
+    }
+
+    public static void renderFoxHoldItem(MatrixStack matrixStack, VertexConsumerProvider vertexConsumerProvider, int light, ItemStack itemStack, float headRoll, float xRotation, float yRotation, ModelPart headModelPart) {
+        if (itemStack.isEmpty()) {
+            return;
+        }
+
+        ItemRenderState itemRenderState = new ItemRenderState();
+        MC.getItemModelManager().updateForLivingEntity(itemRenderState, itemStack, ModelTransformationMode.GROUND, false, new WolfEntity(EntityType.WOLF, MC.world));
+
+        if (itemRenderState.isEmpty()) {
+            return;
+        }
+
+        matrixStack.push();
+        matrixStack.translate(headModelPart.pivotX / 16.0F, headModelPart.pivotY / 16.0F, headModelPart.pivotZ / 16.0F);
+
+        matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(headRoll));
+//        matrixStack.multiply(RotationAxis.POSITIVE_Z.rotation(headRoll));
+        matrixStack.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(yRotation));
+        matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(xRotation));
+//        matrixStack.translate(0.06F, 0.27F, -0.5F);
+
+        matrixStack.multiply(RotationAxis.POSITIVE_X.rotationDegrees(90.0F));
+
+        itemRenderState.render(matrixStack, vertexConsumerProvider, light, OverlayTexture.DEFAULT_UV);
+        matrixStack.pop();
     }
 }

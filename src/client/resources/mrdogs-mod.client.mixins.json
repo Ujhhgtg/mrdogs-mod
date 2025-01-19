@@ -11,6 +11,7 @@
     "CrashReportClientMixin",
     "DeathScreenClientMixin",
     "EntityClientMixin",
+    "EntityRendererAccessor",
     "EntityRendererClientMixin",
     "HandledScreenClientMixin",
     "ItemClientMixin",
@@ -26,8 +27,8 @@
     "ScreenClientMixin",
     "SplashTextResourceSupplierClientMixin",
     "TranslationStorageClientMixin",
-    "WorldRendererClientMixin",
-    "WolfEntityModelAccessor"
+    "WolfEntityModelAccessor",
+    "WorldRendererClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1

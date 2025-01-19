@@ -1,26 +1,21 @@
 package dev.ujhhgtg.mrdogsmod.mixin.client;
 
 import com.llamalad7.mixinextras.sugar.Local;
+import dev.ujhhgtg.mrdogsmod.Utils;
 import dev.ujhhgtg.mrdogsmod.interfaces.*;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.*;
-import net.minecraft.client.render.entity.feature.FeatureRenderer;
-import net.minecraft.client.render.entity.feature.FeatureRendererContext;
-import net.minecraft.client.render.entity.feature.WolfArmorFeatureRenderer;
-import net.minecraft.client.render.entity.feature.WolfCollarFeatureRenderer;
-import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.render.entity.model.EntityModelLayers;
-import net.minecraft.client.render.entity.model.PlayerEntityModel;
-import net.minecraft.client.render.entity.model.WolfEntityModel;
-import net.minecraft.client.render.entity.state.EntityRenderState;
-import net.minecraft.client.render.entity.state.LivingEntityRenderState;
-import net.minecraft.client.render.entity.state.WolfEntityRenderState;
+import net.minecraft.client.render.entity.feature.*;
+import net.minecraft.client.render.entity.model.*;
+import net.minecraft.client.render.entity.state.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.math.RotationAxis;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -28,10 +23,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-
-import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.CONFIG;
+import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.*;
 
 @Mixin(LivingEntityRenderer.class)
 public abstract class LivingEntityRendererClientMixin<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> extends EntityRenderer<T, S> implements FeatureRendererContext<S, M>, IMixinEntityRendererFactoryContext, IMixinWolfEntityModel, IMixinWolfEntityRenderState, IMixinWolfEntityRenderer {
@@ -53,21 +45,19 @@ public abstract class LivingEntityRendererClientMixin<T extends LivingEntity, S 
     @Unique
     private WolfCollarFeatureRenderer wolfCollarFeatureRenderer;
 
+//    @Unique
+//    private FoxHeldItemFeatureRenderer foxHeldItemFeatureRenderer;
+
+    @Unique
+    private FoxEntityRenderState foxEntityRenderState;
+
     protected LivingEntityRendererClientMixin(EntityRendererFactory.Context context) {
         super(context);
     }
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void init(CallbackInfo info, @Local(argsOnly = true) EntityRendererFactory.Context context) {
-        if (!CONFIG.morphToWolf()) {
-            return;
-        }
-
-        if ((Object) this instanceof WolfEntityRenderer) {
-            return;
-        }
-
-        if (!((Object) this instanceof PlayerEntityRenderer)) {
+        if (!shouldMorphToWolf()) {
             return;
         }
 
@@ -87,22 +77,20 @@ public abstract class LivingEntityRendererClientMixin<T extends LivingEntity, S 
         this.mrdogs_mod$setWolfEntityRenderer(new WolfEntityRenderer(this.mrdogs_mod$getEntityRendererFactoryContext()));
         this.wolfArmorFeatureRenderer = new WolfArmorFeatureRenderer(this.mrdogs_mod$getWolfEntityRenderer(), this.mrdogs_mod$getEntityRendererFactoryContext().getEntityModels(), this.mrdogs_mod$getEntityRendererFactoryContext().getEquipmentRenderer());
         this.wolfCollarFeatureRenderer = new WolfCollarFeatureRenderer(this.mrdogs_mod$getWolfEntityRenderer());
+//        this.foxHeldItemFeatureRenderer = new FoxHeldItemFeatureRenderer((FeatureRendererContext<FoxEntityRenderState, FoxEntityModel>) (Object) this);
+        this.foxEntityRenderState = new FoxEntityRenderState();
     }
 
     @Redirect(method = "render(Lnet/minecraft/client/render/entity/state/LivingEntityRenderState;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;III)V"))
-    private void renderEntityModel(M instance, MatrixStack matrixStack, VertexConsumer vertexConsumer, int i, int j, int l, @Local(argsOnly = true) S livingEntityRenderState, @Local(argsOnly = true) VertexConsumerProvider vertexConsumerProvider) {
-        if (!CONFIG.morphToWolf()) {
-            instance.render(matrixStack, vertexConsumer, i, j, l);
+    private void renderEntityModel(M instance, MatrixStack matrixStack, VertexConsumer vertexConsumer, int light, int overlay, int color, @Local(argsOnly = true) S livingEntityRenderState, @Local(argsOnly = true) VertexConsumerProvider vertexConsumerProvider) {
+        if (!this.shouldMorphToWolf()) {
+            instance.render(matrixStack, vertexConsumer, light, overlay, color);
             return;
         }
 
-        if (!(instance instanceof PlayerEntityModel)) {
-            instance.render(matrixStack, vertexConsumer, i, j, l);
-            return;
-        }
-
+        this.mrdogs_mod$getWolfEntityRenderState().inSittingPose = IS_SNEAKING;
         this.mrdogs_mod$getWolfEntityModel().setAngles(this.mrdogs_mod$getWolfEntityRenderState());
 
         ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getLeftFrontLeg().pitch = ((PlayerEntityModel) instance).leftLeg.pitch;
@@ -117,28 +105,50 @@ public abstract class LivingEntityRendererClientMixin<T extends LivingEntity, S 
         ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getTail().yaw = ((PlayerEntityModel) instance).leftLeg.pitch * 0.7F;
         ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getHead().pitch = livingEntityRenderState.pitch * ((float)Math.PI / 180F);
         ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getHead().yaw = livingEntityRenderState.yawDegrees * ((float)Math.PI / 180F);
+        ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getHead().roll = ((PlayerEntityModel) instance).head.roll;
 
-        this.mrdogs_mod$getWolfEntityModel().render(matrixStack, vertexConsumer, i, j, l);
-        this.wolfArmorFeatureRenderer.render(matrixStack, vertexConsumerProvider, i, this.mrdogs_mod$getWolfEntityRenderState(), this.mrdogs_mod$getWolfEntityRenderState().yawDegrees, this.mrdogs_mod$getWolfEntityRenderState().pitch);
-        this.wolfCollarFeatureRenderer.render(matrixStack, vertexConsumerProvider, i, this.mrdogs_mod$getWolfEntityRenderState(), this.mrdogs_mod$getWolfEntityRenderState().yawDegrees, this.mrdogs_mod$getWolfEntityRenderState().pitch);
+        this.mrdogs_mod$getWolfEntityModel().render(matrixStack, vertexConsumer, light, overlay, color);
+        this.wolfArmorFeatureRenderer.render(matrixStack, vertexConsumerProvider, light, this.mrdogs_mod$getWolfEntityRenderState(), this.mrdogs_mod$getWolfEntityRenderState().yawDegrees, this.mrdogs_mod$getWolfEntityRenderState().pitch);
+        this.wolfCollarFeatureRenderer.render(matrixStack, vertexConsumerProvider, light, this.mrdogs_mod$getWolfEntityRenderState(), this.mrdogs_mod$getWolfEntityRenderState().yawDegrees, this.mrdogs_mod$getWolfEntityRenderState().pitch);
+        /*
+            data:  x_move = -0.03
+            y_move = 0.23
+            z_move = -0.15
+            y_rot = 40
+
+            -1.57 0.022
+            0.45 0.04
+            pitch
+        */
+        //        matrixStack.push();
+//        matrixStack.translate(X_MOVE, Y_MOVE, Z_MOVE);
+//        matrixStack.push();
+//        matrixStack.multiply(RotationAxis.POSITIVE_X.rotation(((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getHead().pitch));
+//        LOGGER.info("X_MOVE = {}, Y_MOVE = {}, Z_MOVE = {}", X_MOVE, Y_MOVE, Z_MOVE);
+//        LOGGER.info("X_ROT = {}, Y_ROT = {}, Z_ROT = {}", 0, Y_ROTATION, Z_ROTATION);
+//        LOGGER.info("head.pitch = {}, head.yaw = {}, head.roll = {}", ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getHead().pitch, ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getHead().yaw, ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getHead().roll);
+//        Utils.renderFoxHoldItem(matrixStack, vertexConsumerProvider, light, Items.BONE.getDefaultStack(), Z_ROTATION, 0, Y_ROTATION, ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getHead());
+//        matrixStack.pop();
+//        matrixStack.pop();
     }
 
     @Redirect(method = "render(Lnet/minecraft/client/render/entity/state/LivingEntityRenderState;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(
             value = "INVOKE",
             target = "Lnet/minecraft/client/render/entity/feature/FeatureRenderer;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;ILnet/minecraft/client/render/entity/state/EntityRenderState;FF)V"))
     private void renderFeature(FeatureRenderer<S, M> instance, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, EntityRenderState state, float limbAngle, float limbDistance) {
-        boolean isPlayerEntity = false;
-        Type superclass = this.getClass().getGenericSuperclass();
-        if (superclass instanceof ParameterizedType parameterized) {
-            String typeName = parameterized.getActualTypeArguments()[0].getTypeName();
-            if (typeName.equals("PlayerEntity")) {
-                isPlayerEntity = true;
-            }
+        // we render the features ourselves (in renderEntityModel()) because some arguments need to be modified
+
+        if (shouldMorphToWolf()) {
+            return;
         }
 
-        if (!isPlayerEntity) {
-            instance.render(matrices, vertexConsumers, light, (S) state, limbAngle, limbDistance);
-        }
+        instance.render(matrices, vertexConsumers, light, (S) state, limbAngle, limbDistance);
+    }
+
+    @Unique
+    private boolean shouldMorphToWolf() {
+        // noinspection ConstantValue
+        return CONFIG.morphToWolf() && !(((Object) this) instanceof WolfEntityRenderer) && (((Object) this) instanceof PlayerEntityRenderer);
     }
 
     @Override

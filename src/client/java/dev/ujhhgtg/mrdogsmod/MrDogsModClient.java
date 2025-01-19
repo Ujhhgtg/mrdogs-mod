@@ -20,13 +20,28 @@ import java.util.Random;
 public class MrDogsModClient implements ClientModInitializer {
     public static final String MOD_ID = "mrdogs-mod";
 
-    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID + "-client");
 
     public static boolean IS_IN_COBWEB = false;
+
+    public static boolean IS_SNEAKING = false;
 
     public static boolean SURRENDERED_FROM_ESCAPING_WIDGETS = false;
 
     public static final Text SURRENDER_TEXT = Text.translatable("text.mrdogs-mod.surrender");
+
+    // TODO: TESTING - REMOVE!
+    public static float Y_ROTATION = 40f;
+
+    public static float X_ROTATION = 0.0f;
+
+    public static float Z_ROTATION = 0.0f;
+
+    public static float X_MOVE = -0.03f;
+
+    public static float Y_MOVE = 0.23f;
+
+    public static float Z_MOVE = -0.15f;
 
     public static MinecraftClient MC = MinecraftClient.getInstance();
 

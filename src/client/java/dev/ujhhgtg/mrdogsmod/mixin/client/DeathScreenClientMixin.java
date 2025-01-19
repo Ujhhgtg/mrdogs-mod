@@ -58,7 +58,7 @@ public abstract class DeathScreenClientMixin extends Screen {
         }
     }
 
-    @Inject(method = "init", at = @At("HEAD"))
+    @Inject(method = "init", at = @At("HEAD"), cancellable = true)
     private void init(CallbackInfo ci) {
         if (!this.isFakeDeathScreen) {
             return;
@@ -74,6 +74,7 @@ public abstract class DeathScreenClientMixin extends Screen {
         this.buttons.add(this.titleScreenButton);
         this.setButtonsActive(true);
         this.scoreText = Text.translatable("deathScreen.score.value", Text.literal("25555").formatted(Formatting.YELLOW));
+        ci.cancel();
     }
 
     @Unique
