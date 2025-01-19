@@ -1,21 +1,30 @@
 package dev.ujhhgtg.mrdogsmod.mixin.client;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import dev.ujhhgtg.mrdogsmod.Utils;
-import dev.ujhhgtg.mrdogsmod.interfaces.*;
+import dev.ujhhgtg.mrdogsmod.interfaces.IMixinEntityRendererFactoryContext;
+import dev.ujhhgtg.mrdogsmod.interfaces.IMixinWolfEntityModel;
+import dev.ujhhgtg.mrdogsmod.interfaces.IMixinWolfEntityRenderState;
+import dev.ujhhgtg.mrdogsmod.interfaces.IMixinWolfEntityRenderer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.*;
-import net.minecraft.client.render.entity.feature.*;
-import net.minecraft.client.render.entity.model.*;
-import net.minecraft.client.render.entity.state.*;
+import net.minecraft.client.render.entity.feature.FeatureRenderer;
+import net.minecraft.client.render.entity.feature.FeatureRendererContext;
+import net.minecraft.client.render.entity.feature.WolfArmorFeatureRenderer;
+import net.minecraft.client.render.entity.feature.WolfCollarFeatureRenderer;
+import net.minecraft.client.render.entity.model.EntityModel;
+import net.minecraft.client.render.entity.model.EntityModelLayers;
+import net.minecraft.client.render.entity.model.PlayerEntityModel;
+import net.minecraft.client.render.entity.model.WolfEntityModel;
+import net.minecraft.client.render.entity.state.EntityRenderState;
+import net.minecraft.client.render.entity.state.FoxEntityRenderState;
+import net.minecraft.client.render.entity.state.LivingEntityRenderState;
+import net.minecraft.client.render.entity.state.WolfEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.RotationAxis;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,7 +32,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.*;
+import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.CONFIG;
+import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.IS_SNEAKING;
 
 @Mixin(LivingEntityRenderer.class)
 public abstract class LivingEntityRendererClientMixin<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> extends EntityRenderer<T, S> implements FeatureRendererContext<S, M>, IMixinEntityRendererFactoryContext, IMixinWolfEntityModel, IMixinWolfEntityRenderState, IMixinWolfEntityRenderer {
@@ -44,12 +54,6 @@ public abstract class LivingEntityRendererClientMixin<T extends LivingEntity, S 
 
     @Unique
     private WolfCollarFeatureRenderer wolfCollarFeatureRenderer;
-
-//    @Unique
-//    private FoxHeldItemFeatureRenderer foxHeldItemFeatureRenderer;
-
-    @Unique
-    private FoxEntityRenderState foxEntityRenderState;
 
     protected LivingEntityRendererClientMixin(EntityRendererFactory.Context context) {
         super(context);
@@ -77,8 +81,6 @@ public abstract class LivingEntityRendererClientMixin<T extends LivingEntity, S 
         this.mrdogs_mod$setWolfEntityRenderer(new WolfEntityRenderer(this.mrdogs_mod$getEntityRendererFactoryContext()));
         this.wolfArmorFeatureRenderer = new WolfArmorFeatureRenderer(this.mrdogs_mod$getWolfEntityRenderer(), this.mrdogs_mod$getEntityRendererFactoryContext().getEntityModels(), this.mrdogs_mod$getEntityRendererFactoryContext().getEquipmentRenderer());
         this.wolfCollarFeatureRenderer = new WolfCollarFeatureRenderer(this.mrdogs_mod$getWolfEntityRenderer());
-//        this.foxHeldItemFeatureRenderer = new FoxHeldItemFeatureRenderer((FeatureRendererContext<FoxEntityRenderState, FoxEntityModel>) (Object) this);
-        this.foxEntityRenderState = new FoxEntityRenderState();
     }
 
     @Redirect(method = "render(Lnet/minecraft/client/render/entity/state/LivingEntityRenderState;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(

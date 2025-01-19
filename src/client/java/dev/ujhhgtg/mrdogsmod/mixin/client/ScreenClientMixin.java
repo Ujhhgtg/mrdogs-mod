@@ -2,7 +2,6 @@ package dev.ujhhgtg.mrdogsmod.mixin.client;
 
 import dev.ujhhgtg.mrdogsmod.Utils;
 import io.wispforest.owo.config.ui.ConfigScreen;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.gui.AbstractParentElement;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.Element;
