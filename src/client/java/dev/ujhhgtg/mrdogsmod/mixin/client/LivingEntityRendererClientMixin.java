@@ -17,7 +17,6 @@ import net.minecraft.client.render.entity.model.EntityModelLayers;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.render.entity.model.WolfEntityModel;
 import net.minecraft.client.render.entity.state.EntityRenderState;
-import net.minecraft.client.render.entity.state.FoxEntityRenderState;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
 import net.minecraft.client.render.entity.state.WolfEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
