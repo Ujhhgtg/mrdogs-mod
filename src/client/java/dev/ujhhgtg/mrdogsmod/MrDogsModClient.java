@@ -31,17 +31,17 @@ public class MrDogsModClient implements ClientModInitializer {
     public static final Text SURRENDER_TEXT = Text.translatable("text.mrdogs-mod.surrender");
 
     // TODO: TESTING - REMOVE!
-    public static float Y_ROTATION = 40f;
-
-    public static float X_ROTATION = 0.0f;
-
-    public static float Z_ROTATION = 0.0f;
-
-    public static float X_MOVE = -0.03f;
-
-    public static float Y_MOVE = 0.23f;
-
-    public static float Z_MOVE = -0.15f;
+//    public static float Y_ROTATION = 40f;
+//
+//    public static float X_ROTATION = 0.0f;
+//
+//    public static float Z_ROTATION = 0.0f;
+//
+//    public static float X_MOVE = -0.03f;
+//
+//    public static float Y_MOVE = 0.23f;
+//
+//    public static float Z_MOVE = -0.15f;
 
     public static MinecraftClient MC = MinecraftClient.getInstance();
 

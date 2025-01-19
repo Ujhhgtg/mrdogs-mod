@@ -117,10 +117,6 @@ public abstract class ScreenClientMixin extends AbstractParentElement implements
             }
         }
 
-        if (!FabricLoader.getInstance().isDevelopmentEnvironment()) {
-            return;
-        }
-
         // noinspection ConstantValue
         if (!((Object) this instanceof DeathScreen) && !((Object) this instanceof ChatScreen)) {
             this.addDrawableChild(new ButtonWidget.Builder(Text.literal("Show Fake Death"), button ->
@@ -139,76 +135,76 @@ public abstract class ScreenClientMixin extends AbstractParentElement implements
                     .build());
         }
 
-        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("yRotation + 0.05f"), button ->
-                Y_ROTATION += 10f)
-                .position(5, 95)
-                .size(80, 20)
-                .build());
-
-        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("yRotation - 0.05f"), button ->
-                Y_ROTATION -= 10f)
-                .position(5, 125)
-                .size(80, 20)
-                .build());
-
-        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("xRotation + 0.05f"), button ->
-                X_ROTATION += 10f)
-                .position(5, 155)
-                .size(80, 20)
-                .build());
-
-        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("xRotation - 0.05f"), button ->
-                X_ROTATION -= 10f)
-                .position(5, 185)
-                .size(80, 20)
-                .build());
-
-        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("xMove + 0.05f"), button ->
-                X_MOVE += 0.05f)
-                .position(5, 215)
-                .size(80, 20)
-                .build());
-
-        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("xMove - 0.05f"), button ->
-                X_MOVE -= 0.05f)
-                .position(5, 245)
-                .size(80, 20)
-                .build());
-
-        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("yMove + 0.05f"), button ->
-                Y_MOVE += 0.05f)
-                .position(5, 275)
-                .size(80, 20)
-                .build());
-
-        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("yMove - 0.05f"), button ->
-                Y_MOVE -= 0.05f)
-                .position(5, 305)
-                .size(80, 20)
-                .build());
-
-        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("zMove + 0.05f"), button ->
-                Z_MOVE += 0.05f)
-                .position(5, 335)
-                .size(80, 20)
-                .build());
-
-        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("zMove - 0.05f"), button ->
-                Z_MOVE -= 0.05f)
-                .position(5, 365)
-                .size(80, 20)
-                .build());
-
-        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("zRot + 10f"), button ->
-                Z_ROTATION += 10f)
-                .position(5, 395)
-                .size(80, 20)
-                .build());
-
-        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("zRot - 10f"), button ->
-                Z_ROTATION -= 10f)
-                .position(5, 425)
-                .size(80, 20)
-                .build());
+//        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("yRotation + 0.05f"), button ->
+//                Y_ROTATION += 10f)
+//                .position(5, 95)
+//                .size(80, 20)
+//                .build());
+//
+//        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("yRotation - 0.05f"), button ->
+//                Y_ROTATION -= 10f)
+//                .position(5, 125)
+//                .size(80, 20)
+//                .build());
+//
+//        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("xRotation + 0.05f"), button ->
+//                X_ROTATION += 10f)
+//                .position(5, 155)
+//                .size(80, 20)
+//                .build());
+//
+//        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("xRotation - 0.05f"), button ->
+//                X_ROTATION -= 10f)
+//                .position(5, 185)
+//                .size(80, 20)
+//                .build());
+//
+//        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("xMove + 0.05f"), button ->
+//                X_MOVE += 0.05f)
+//                .position(5, 215)
+//                .size(80, 20)
+//                .build());
+//
+//        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("xMove - 0.05f"), button ->
+//                X_MOVE -= 0.05f)
+//                .position(5, 245)
+//                .size(80, 20)
+//                .build());
+//
+//        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("yMove + 0.05f"), button ->
+//                Y_MOVE += 0.05f)
+//                .position(5, 275)
+//                .size(80, 20)
+//                .build());
+//
+//        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("yMove - 0.05f"), button ->
+//                Y_MOVE -= 0.05f)
+//                .position(5, 305)
+//                .size(80, 20)
+//                .build());
+//
+//        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("zMove + 0.05f"), button ->
+//                Z_MOVE += 0.05f)
+//                .position(5, 335)
+//                .size(80, 20)
+//                .build());
+//
+//        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("zMove - 0.05f"), button ->
+//                Z_MOVE -= 0.05f)
+//                .position(5, 365)
+//                .size(80, 20)
+//                .build());
+//
+//        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("zRot + 10f"), button ->
+//                Z_ROTATION += 10f)
+//                .position(5, 395)
+//                .size(80, 20)
+//                .build());
+//
+//        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("zRot - 10f"), button ->
+//                Z_ROTATION -= 10f)
+//                .position(5, 425)
+//                .size(80, 20)
+//                .build());
     }
 }
