@@ -34,6 +34,9 @@ public abstract class TranslationStorageClientMixin extends Language {
 
         String translated = cir.getReturnValue();
 
+        // noinspection SpellCheckingInspection
+        translated = translated.replace("inecraft", "inceraft");
+
         if (!key.contains("mrdogs-")) {
             String wolfName = this.translations.get("entity.minecraft.wolf");
             translated = translated.replace(wolfName, CONFIG.customWolfName());

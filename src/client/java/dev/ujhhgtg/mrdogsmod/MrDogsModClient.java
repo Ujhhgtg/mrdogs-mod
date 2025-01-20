@@ -15,6 +15,7 @@ import net.fabricmc.api.ClientModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
 import java.util.Random;
 
 public class MrDogsModClient implements ClientModInitializer {
@@ -43,15 +44,18 @@ public class MrDogsModClient implements ClientModInitializer {
 //
 //    public static float Z_MOVE = -0.15f;
 
-    public static MinecraftClient MC = MinecraftClient.getInstance();
+    public static MinecraftClient MC;
 
     public static final dev.ujhhgtg.mrdogsmod.MrDogsConfig CONFIG = dev.ujhhgtg.mrdogsmod.MrDogsConfig.createAndLoad();
+
+    public static final URI TROLL_URI = URI.create(CONFIG.trollUri());
 
     public static final Random RANDOM = new Random();
 
     @Override
     public void onInitializeClient() {
         LOGGER.info("Initializing Mr. Dog's Mod client mod");
+        MC = MinecraftClient.getInstance();
 
         LOGGER.info("Initializing TinyPinyin");
         Pinyin.init(Pinyin.newConfig());
@@ -59,7 +63,7 @@ public class MrDogsModClient implements ClientModInitializer {
         LOGGER.info("1 - Prevent attacking & taming dogs");
         AttackEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
             if (entity instanceof WolfEntity) {
-                if (player != MC.player) {
+                if (!player.equals(MC.player)) {
                     return ActionResult.PASS;
                 }
 
@@ -68,7 +72,7 @@ public class MrDogsModClient implements ClientModInitializer {
             }
 
             if (entity instanceof SheepEntity) {
-                if (player != MC.player) {
+                if (!player.equals(MC.player)) {
                     return ActionResult.PASS;
                 }
 
@@ -88,7 +92,7 @@ public class MrDogsModClient implements ClientModInitializer {
                 return ActionResult.PASS;
             }
 
-            if (player != MC.player) {
+            if (!player.equals(MC.player)) {
                 return ActionResult.PASS;
             }
 
@@ -111,7 +115,7 @@ public class MrDogsModClient implements ClientModInitializer {
 
         LOGGER.info("5 - Improve cobweb");
         AttackBlockCallback.EVENT.register((player, world, hand, blockPos, direction) -> {
-            if (player != MC.player) {
+            if (!player.equals(MC.player)) {
                 return ActionResult.PASS;
             }
 
@@ -122,7 +126,7 @@ public class MrDogsModClient implements ClientModInitializer {
             return ActionResult.FAIL;
         });
         AttackEntityCallback.EVENT.register((player, world, hand, entity, entityHitResult) -> {
-            if (player != MC.player) {
+            if (!player.equals(MC.player)) {
                 return ActionResult.PASS;
             }
 
@@ -133,7 +137,7 @@ public class MrDogsModClient implements ClientModInitializer {
             return ActionResult.FAIL;
         });
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
-            if (player != MC.player) {
+            if (!player.equals(MC.player)) {
                 return ActionResult.PASS;
             }
 
@@ -144,7 +148,7 @@ public class MrDogsModClient implements ClientModInitializer {
             return ActionResult.FAIL;
         });
         UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
-            if (player != MC.player) {
+            if (!player.equals(MC.player)) {
                 return ActionResult.PASS;
             }
 

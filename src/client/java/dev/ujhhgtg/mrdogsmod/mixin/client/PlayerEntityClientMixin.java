@@ -1,18 +1,17 @@
 package dev.ujhhgtg.mrdogsmod.mixin.client;
 
-import net.minecraft.entity.EntityDimensions;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.LivingEntity;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import dev.ujhhgtg.mrdogsmod.MrDogsConfigModel;
+import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.world.World;
-import org.slf4j.Logger;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.Map;
+
+import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.CONFIG;
+import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.MC;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityClientMixin extends LivingEntity {
@@ -20,21 +19,33 @@ public abstract class PlayerEntityClientMixin extends LivingEntity {
         super(entityType, world);
     }
 
-    @Mutable
-    @Final
-    @Shadow
-    public static EntityDimensions STANDING_DIMENSIONS;
+    @ModifyReturnValue(method = "getBaseDimensions", at = @At("RETURN"))
+    private EntityDimensions getBaseDimensions(EntityDimensions original) {
+        if (!shouldApply(this)) {
+            return original;
+        }
 
-    @Mutable
-    @Final
-    @Shadow
-    public static float DEFAULT_EYE_HEIGHT;
+        if (CONFIG.morphedWolfEntityDimensionType() == MrDogsConfigModel.MorphedWolfEntityDimensionType.ORIGINAL) {
+            return original.withEyeHeight(EntityType.WOLF.getDimensions().eyeHeight());
+        }
+        else if (CONFIG.morphedWolfEntityDimensionType() == MrDogsConfigModel.MorphedWolfEntityDimensionType.WOLF) {
+            return EntityType.WOLF.getDimensions();
+        }
 
-    @Shadow @Final private static Logger LOGGER;
+        throw new IndexOutOfBoundsException("invalid config option in morphedWolfEntityDimensionType");
+    }
 
-    @Inject(method = "<clinit>", at = @At("TAIL"))
-    private static void clinit(CallbackInfo ci) {
-        DEFAULT_EYE_HEIGHT = EntityType.WOLF.getDimensions().eyeHeight();
-        STANDING_DIMENSIONS = EntityType.WOLF.getDimensions();
+    @Unique
+    private static boolean shouldApply(PlayerEntityClientMixin player) {
+        if (!CONFIG.morphToWolf()) {
+            return false;
+        }
+
+        // noinspection EqualsBetweenInconvertibleTypes
+        if (!player.equals(MC.player)) {
+            return false;
+        }
+
+        return true;
     }
 }

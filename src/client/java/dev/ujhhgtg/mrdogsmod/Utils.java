@@ -21,7 +21,7 @@ import net.minecraft.util.math.RotationAxis;
 import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.*;
 
 public class Utils {
-    public static boolean isDisallowed(Item item) {
+    public static boolean isTool(Item item) {
         return (item instanceof AxeItem)
                 || (item instanceof PickaxeItem)
                 || (item instanceof ShovelItem)
@@ -32,8 +32,8 @@ public class Utils {
                 || (item instanceof FlintAndSteelItem); 
     }
 
-    public static boolean isDisallowed(ItemStack stack) {
-        return isDisallowed(stack.getItem());
+    public static boolean isTool(ItemStack stack) {
+        return isTool(stack.getItem());
     }
 
     public static boolean isFood(Item item) {
@@ -75,7 +75,7 @@ public class Utils {
             return;
         }
 
-        if (player != MC.player) {
+        if (!player.equals(MC.player)) {
             return;
         }
 

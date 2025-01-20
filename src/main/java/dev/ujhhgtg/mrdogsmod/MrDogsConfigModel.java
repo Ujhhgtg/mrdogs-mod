@@ -9,28 +9,19 @@ import io.wispforest.owo.config.annotation.Modmenu;
 
 @Modmenu(modId = "mrdogs-mod")
 @Config(name = "mrdogs-config", wrapperName = "MrDogsConfig")
-//@Config(value = "mrdogs-config")
 public class MrDogsConfigModel {
-//    @ConfigEntry(id = "blindnessActivationFrequency", translation = "text.config.mrdogs-config.option.blindnessActivationFrequency")
-//    @ConfigOption.Range(min = 1, max = 60)
-//    @ConfigOption.Slider
     public short blindnessActivationFrequency = 10;
-
-//    @ConfigEntry(id = "morphToWolf", translation = "text.config.mrdogs-config.option.morphToWolf")
     public boolean morphToWolf = false;
-
-//    @ConfigEntry(id = "customWolfName", translation = "text.config.mrdogs-config.option.customWolfName")
     public String customWolfName = "[REDACTED]";
-
-//    @ConfigEntry(id = "randomizeWidgets", translation = "text.config.mrdogs-config.option.randomizeWidgets")
     public boolean randomizeWidgets = false;
-
-//    @ConfigEntry(id = "removeCrashReport", translation = "text.config.mrdogs-config.option.removeCrashReport")
     public boolean removeCrashReport = true;
-
-//    @ConfigEntry(id = "replaceChineseWithPinyin", translation = "text.config.mrdogs-config.option.replaceChineseWithPinyin")
     public boolean replaceChineseWithPinyin = false;
-
-//    @ConfigEntry(id = "escapingWidgets", translation = "text.config.mrdogs-config.option.escapingWidgets")
     public boolean escapingWidgets = false;
+    public String trollUri = "https://vdse.bdstatic.com/192d9a98d782d9c74c96f09db9378d93.mp4";
+    public MorphedWolfEntityDimensionType morphedWolfEntityDimensionType = MorphedWolfEntityDimensionType.ORIGINAL;
+
+    public enum MorphedWolfEntityDimensionType {
+        ORIGINAL,
+        WOLF
+    }
 }

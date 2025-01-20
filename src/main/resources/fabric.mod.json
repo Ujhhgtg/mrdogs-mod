@@ -5,10 +5,10 @@
 	"name": "Mr. Dog's Mod",
 	"description": "A simple mod for Mr. Dog",
 	"authors": [
-		"Fey Xie"
+		"Ujhhgtg"
 	],
 	"contact": {
-		"homepage": "https://github.com/Ujhhgtg/",
+		"homepage": "https://github.com/Ujhhgtg/mrdogs-mod/",
 		"sources": "https://github.com/FabricMC/fabric-example-mod"
 	},
 	"license": "MIT",

@@ -16,20 +16,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(PlayerInventory.class)
 public abstract class PlayerInventoryClientMixin implements Inventory {
-//    @Shadow
-//    public int selectedSlot;
-
     @Final
     @Shadow
     public PlayerEntity player;
 
-    @Inject(method = "swapStackWithHotbar", at = @At("HEAD"), cancellable = true)
-    private void swapStackWithHotbar(ItemStack newStack, CallbackInfo ci) {
-        if (Utils.isDisallowed(newStack)) {
-            sendErrorMessage(player);
-            ci.cancel();
-        }
-    }
+//    @Inject(method = "swapStackWithHotbar", at = @At("HEAD"), cancellable = true)
+//    private void swapStackWithHotbar(ItemStack newStack, CallbackInfo ci) {
+//        if (!Utils.isTool(newStack)) {
+//            return;
+//        }
+//
+//        sendErrorMessage(player);
+//        ci.cancel();
+//    }
 
 //    @Inject(method = "swapSlotWithHotbar", at = @At("HEAD"), cancellable = true)
 //    private void swapSlotWithHotbar(int newStackId, CallbackInfo ci) {
@@ -43,14 +42,14 @@ public abstract class PlayerInventoryClientMixin implements Inventory {
     @Inject(method = "setSelectedSlot", at = @At("HEAD"), cancellable = true)
     public void setSelectedSlot(int newStackId, CallbackInfo ci) {
         ItemStack newStack = getStack(newStackId);
-        if (Utils.isDisallowed(newStack)) {
+        if (Utils.isTool(newStack)) {
             sendErrorMessage(player);
             ci.cancel();
         }
     }
 
     @Unique
-    private void sendErrorMessage(@Nullable PlayerEntity player) {
+    private static void sendErrorMessage(@Nullable PlayerEntity player) {
         Utils.sendErrorOverlayToPlayer(player, "[Mr. Dog's Mod] 非高级物种没有使用工具的能力！");
     }
 }

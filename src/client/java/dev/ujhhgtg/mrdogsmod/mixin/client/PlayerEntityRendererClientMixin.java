@@ -25,6 +25,10 @@ public abstract class PlayerEntityRendererClientMixin extends LivingEntityRender
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void init(CallbackInfo info) {
+        if (!shouldMorphToWolf()) {
+            return;
+        }
+
         this.features.clear();
     }
 
@@ -48,10 +52,14 @@ public abstract class PlayerEntityRendererClientMixin extends LivingEntityRender
 
     @Unique
     private boolean shouldMorphToWolf() {
+        if (!CONFIG.morphToWolf()) {
+            return false;
+        }
+
         if (MC.player == null) {
             return false;
         }
 
-        return CONFIG.morphToWolf() && this.getState().name.equals(MC.player.getGameProfile().getName());
+        return this.getState().name.equals(MC.player.getGameProfile().getName());
     }
 }

@@ -18,6 +18,7 @@ import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.render.entity.model.WolfEntityModel;
 import net.minecraft.client.render.entity.state.EntityRenderState;
 import net.minecraft.client.render.entity.state.LivingEntityRenderState;
+import net.minecraft.client.render.entity.state.PlayerEntityRenderState;
 import net.minecraft.client.render.entity.state.WolfEntityRenderState;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
@@ -31,11 +32,10 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.CONFIG;
-import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.IS_SNEAKING;
+import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.*;
 
 @Mixin(LivingEntityRenderer.class)
-public abstract class LivingEntityRendererClientMixin<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> extends EntityRenderer<T, S> implements FeatureRendererContext<S, M>, IMixinEntityRendererFactoryContext, IMixinWolfEntityModel, IMixinWolfEntityRenderState, IMixinWolfEntityRenderer {
+public abstract class LivingEntityRendererClientMixin<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> extends EntityRenderer<T, S> implements FeatureRendererContext<S, M>, IMixinEntityRendererFactoryContext, IMixinWolfEntityModel, IMixinWolfEntityRenderState, IMixinWolfEntityRenderer, EntityRendererAccessor<T, S> {
     @Unique
     private EntityRendererFactory.Context entityRendererFactoryContext;
 
@@ -60,7 +60,12 @@ public abstract class LivingEntityRendererClientMixin<T extends LivingEntity, S 
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void init(CallbackInfo info, @Local(argsOnly = true) EntityRendererFactory.Context context) {
-        if (!shouldMorphToWolf()) {
+        // we have to initialize these fields even if shouldMorphToWolf() == false
+        // since this class may exist even if player isn't in world
+//        if (!shouldMorphToWolf()) {
+//            return;
+//        }
+        if ((Object) this instanceof WolfEntityRenderer) {
             return;
         }
 
@@ -139,17 +144,30 @@ public abstract class LivingEntityRendererClientMixin<T extends LivingEntity, S 
     private void renderFeature(FeatureRenderer<S, M> instance, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, EntityRenderState state, float limbAngle, float limbDistance) {
         // we render the features ourselves (in renderEntityModel()) because some arguments need to be modified
 
-        if (shouldMorphToWolf()) {
-            return;
+        if (!shouldMorphToWolf()) {
+            instance.render(matrices, vertexConsumers, light, (S) state, limbAngle, limbDistance);
         }
-
-        instance.render(matrices, vertexConsumers, light, (S) state, limbAngle, limbDistance);
     }
 
     @Unique
     private boolean shouldMorphToWolf() {
-        // noinspection ConstantValue
-        return CONFIG.morphToWolf() && !(((Object) this) instanceof WolfEntityRenderer) && (((Object) this) instanceof PlayerEntityRenderer);
+        if (!CONFIG.morphToWolf()) {
+            return false;
+        }
+
+        if (((Object) this) instanceof WolfEntityRenderer) {
+            return false;
+        }
+
+        if (!(this.getState() instanceof PlayerEntityRenderState playerEntityRenderState)) {
+            return false;
+        }
+
+        if (MC.player == null) {
+            return false;
+        }
+
+        return playerEntityRenderState.name.equals(MC.player.getGameProfile().getName());
     }
 
     @Override

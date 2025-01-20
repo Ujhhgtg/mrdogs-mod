@@ -116,14 +116,14 @@ public abstract class ScreenClientMixin extends AbstractParentElement implements
             }
         }
 
-        // noinspection ConstantValue
-        if (!((Object) this instanceof DeathScreen) && !((Object) this instanceof ChatScreen)) {
-            this.addDrawableChild(new ButtonWidget.Builder(Text.literal("Show Fake Death"), button ->
-                    MC.execute(() -> MC.setScreen(new DeathScreen(Text.literal("###FAKE_DEATH_SCREEN###"), false))))
-                    .position(5, 35)
-                    .size(120, 20)
-                    .build());
-        }
+//        // noinspection ConstantValue
+//        if (!((Object) this instanceof DeathScreen) && !((Object) this instanceof ChatScreen)) {
+//            this.addDrawableChild(new ButtonWidget.Builder(Text.literal("Show Fake Death"), button ->
+//                    MC.execute(() -> MC.setScreen(new DeathScreen(Text.literal("###FAKE_DEATH_SCREEN###"), false))))
+//                    .position(5, 35)
+//                    .size(120, 20)
+//                    .build());
+//        }
 
         // noinspection ConstantValue
         if (!((Object) this instanceof DeathScreen) && !((Object) this instanceof ChatScreen) && !((Object) this instanceof ConfigScreen)) {

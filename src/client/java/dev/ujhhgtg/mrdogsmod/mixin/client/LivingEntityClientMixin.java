@@ -51,7 +51,7 @@ public abstract class LivingEntityClientMixin {
             return true;
         }
 
-        if (player != MC.player) {
+        if (!player.equals(MC.player)) {
             return true;
         }
 

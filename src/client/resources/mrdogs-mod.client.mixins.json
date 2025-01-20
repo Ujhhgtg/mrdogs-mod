@@ -8,29 +8,36 @@
     "ClickableWidgetClientMixin",
     "ClientPlayerEntityClientMixin",
     "CobwebBlockClientMixin",
+    "ConfirmLinkScreenClientMixin",
     "CrashReportClientMixin",
     "DeathScreenClientMixin",
     "EntityClientMixin",
     "EntityRendererAccessor",
     "EntityRendererClientMixin",
+    "GameMenuScreenClientMixin",
     "HandledScreenClientMixin",
     "ItemClientMixin",
     "ItemRendererClientMixin",
     "ItemStackClientMixin",
     "KeyboardInputClientMixin",
+    "LevelLoadingScreenClientMixin",
     "LivingEntityClientMixin",
     "LivingEntityRendererClientMixin",
+    "LogoDrawerClientMixin",
     "MinecraftClientClientMixin",
     "PlayerEntityClientMixin",
     "PlayerEntityRendererClientMixin",
     "PlayerInventoryClientMixin",
     "ScreenClientMixin",
     "SplashTextResourceSupplierClientMixin",
+    "TitleScreenClientMixin",
     "TranslationStorageClientMixin",
     "WolfEntityModelAccessor",
     "WorldRendererClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1
-	}
+  },
+  "mixins": [
+  ]
 }

@@ -20,3 +20,7 @@ Add the mod jar file to your `mods` folder.
 
 ## Contributing
 Open an issue if you have found one or open pull requests if you have something to improve!
+
+
+## Known Bugs
+- Player entity dimensions are reset on death.
