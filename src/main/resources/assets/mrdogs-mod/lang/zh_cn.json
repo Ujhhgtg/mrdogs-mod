@@ -1,7 +1,7 @@
 {
   "text.configmrdogs—config.title": "Mr Dog's Mod 配置",
-  "text.config.mrdogs-config.option.blindnessActivationFrequency": "失明效果触发频率",
-  "text.config.mrdogs-config.option.blindnessActivationFrequency.tooltip": "该效果在每<该值>秒时间经过时触发。将该值设定为 -1 以禁用此功能。",
+  "text.config.mrdogs-config.option.randomEffectActivationInterval": "失明效果触发频率",
+  "text.config.mrdogs-config.option.randomEffectActivationInterval.tooltip": "该效果在每<该值>秒时间经过时触发。将该值设定为 -1 以禁用此功能。",
   "text.config.mrdogs-config.option.morphToWolf": "变形为狼",
   "text.config.mrdogs-config.option.morphToWolf.tooltip": "是否将当前玩家变形为一匹狼。",
   "text.config.mrdogs-config.option.customWolfName": "自定义狼名称",

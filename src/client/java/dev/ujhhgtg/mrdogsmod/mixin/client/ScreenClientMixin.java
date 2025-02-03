@@ -1,20 +1,19 @@
 package dev.ujhhgtg.mrdogsmod.mixin.client;
 
+import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import dev.ujhhgtg.mrdogsmod.Utils;
-import io.wispforest.owo.config.ui.ConfigScreen;
-import net.minecraft.client.gui.AbstractParentElement;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.gui.Element;
-import net.minecraft.client.gui.Selectable;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.gui.screen.ChatScreen;
-import net.minecraft.client.gui.screen.DeathScreen;
+import net.minecraft.client.gui.screen.DisconnectedScreen;
+import net.minecraft.client.gui.screen.FatalErrorScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.text.Text;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import net.minecraft.client.realms.gui.screen.DisconnectedRealmsScreen;
+import net.minecraft.client.render.RenderLayer;
+import net.minecraft.util.Identifier;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -36,9 +35,33 @@ public abstract class ScreenClientMixin extends AbstractParentElement implements
     @Shadow
     protected abstract void refreshWidgetPositions();
 
+    @Mutable
+    @Shadow
+    @Final
+    public static Identifier MENU_BACKGROUND_TEXTURE;
+
     @Inject(method = "<init>", at = @At("CTOR_HEAD"))
     private void ctor(CallbackInfo ci) {
+        if (!CONFIG.logScreenClassName()) {
+            return;
+        }
+
         LOGGER.info(this.getClass().getName());
+    }
+
+    @WrapMethod(method = "renderDarkening(Lnet/minecraft/client/gui/DrawContext;IIII)V")
+    protected void renderDarkening(DrawContext context, int x, int y, int width, int height, Operation<Void> original) {
+        if (!shouldModifyBackground((Screen) (Object) this)) {
+            original.call(context, x, y, width, height);
+            return;
+        }
+
+        context.drawTexture(RenderLayer::getGuiTextured, Identifier.of("mrdogs-mod", "textures/gui/menu_background.png"), x, y, 0.0F, 0.0F, width, height, width, height);
+    }
+
+    @Unique
+    private static boolean shouldModifyBackground(Screen screen) {
+        return screen instanceof DisconnectedScreen || screen instanceof DisconnectedRealmsScreen || screen instanceof FatalErrorScreen;
     }
 
     @Inject(method = "addDrawableChild", at = @At("TAIL"))
@@ -125,14 +148,24 @@ public abstract class ScreenClientMixin extends AbstractParentElement implements
 //                    .build());
 //        }
 
-        // noinspection ConstantValue
-        if (!((Object) this instanceof DeathScreen) && !((Object) this instanceof ChatScreen) && !((Object) this instanceof ConfigScreen)) {
-            this.addDrawableChild(new ButtonWidget.Builder(Text.literal("Show Config Screen"), button ->
-                    MC.execute(() -> MC.setScreen(ConfigScreen.create(CONFIG, MC.currentScreen))))
-                    .position(5, 65)
-                    .size(120, 20)
-                    .build());
-        }
+//        // noinspection ConstantValue
+//        if (FabricLoader.getInstance().isDevelopmentEnvironment() && !((Object) this instanceof DeathScreen) && !((Object) this instanceof ChatScreen) && !((Object) this instanceof ConfigScreen)) {
+//            this.addDrawableChild(new ButtonWidget.Builder(Text.literal("Show Config Screen"), button ->
+//                    MC.execute(() -> MC.setScreen(ConfigScreen.create(CONFIG, MC.currentScreen))))
+//                    .position(5, 65)
+//                    .size(120, 20)
+//                    .build());
+//        }
+
+//        // noinspection ConstantValue
+//        if (!((Object) this instanceof DeathScreen) && !((Object) this instanceof ChatScreen) && !((Object) this instanceof ConfigScreen)) {
+//            this.addDrawableChild(new ButtonWidget.Builder(Text.literal("Show Disconnect Screen"), button ->
+//                    MC.execute(() -> MC.setScreen(new DisconnectedScreen(MC.currentScreen, Text.of("Test"), Text.of("no reason")))))
+//                    .position(5, 95)
+//                    .size(120, 20)
+//                    .build());
+//        }
+
 
 //        this.addDrawableChild(new ButtonWidget.Builder(Text.literal("yRotation + 0.05f"), button ->
 //                Y_ROTATION += 10f)

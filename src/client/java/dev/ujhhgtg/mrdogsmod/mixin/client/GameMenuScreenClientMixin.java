@@ -10,10 +10,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-import java.net.URI;
 import java.util.Arrays;
 
-import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.CONFIG;
 import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.TROLL_URI;
 
 @Mixin(GameMenuScreen.class)

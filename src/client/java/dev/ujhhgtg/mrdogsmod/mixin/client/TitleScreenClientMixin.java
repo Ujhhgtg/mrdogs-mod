@@ -16,10 +16,7 @@ public abstract class TitleScreenClientMixin extends Screen {
 
     @Inject(method = "addNormalWidgets", at = @At("HEAD"))
     private void addNormalWidgets(CallbackInfoReturnable<Integer> cir) {
-        if (this.client == null) {
-            return;
-        }
-
+        assert this.client != null;
         this.client.options.skipMultiplayerWarning = false;
     }
 }

@@ -33,7 +33,7 @@
     "TitleScreenClientMixin",
     "TranslationStorageClientMixin",
     "WolfEntityModelAccessor",
-    "WorldRendererClientMixin"
+    "ClientWorldClientMixin"
   ],
   "injectors": {
     "defaultRequire": 1

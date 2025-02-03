@@ -14,7 +14,7 @@ public class MrDogsMod implements ModInitializer {
     @Override
     public void onInitialize() {
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) {
-            LOGGER.warn("This mod is not intended to be running on a server!");
+            LOGGER.warn("This mod is not intended to run on a server!");
         }
     }
 }

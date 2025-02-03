@@ -1,13 +1,12 @@
 package dev.ujhhgtg.mrdogsmod.mixin.client;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import dev.ujhhgtg.mrdogsmod.interfaces.IMixinEntityRendererFactoryContext;
-import dev.ujhhgtg.mrdogsmod.interfaces.IMixinWolfEntityModel;
-import dev.ujhhgtg.mrdogsmod.interfaces.IMixinWolfEntityRenderState;
-import dev.ujhhgtg.mrdogsmod.interfaces.IMixinWolfEntityRenderer;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.entity.*;
+import net.minecraft.client.render.entity.EntityRenderer;
+import net.minecraft.client.render.entity.EntityRendererFactory;
+import net.minecraft.client.render.entity.LivingEntityRenderer;
+import net.minecraft.client.render.entity.WolfEntityRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRenderer;
 import net.minecraft.client.render.entity.feature.FeatureRendererContext;
 import net.minecraft.client.render.entity.feature.WolfArmorFeatureRenderer;
@@ -32,10 +31,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.*;
+import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.CONFIG;
+import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.IS_SNEAKING;
+import static dev.ujhhgtg.mrdogsmod.MrDogsModClient.MC;
 
 @Mixin(LivingEntityRenderer.class)
-public abstract class LivingEntityRendererClientMixin<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> extends EntityRenderer<T, S> implements FeatureRendererContext<S, M>, IMixinEntityRendererFactoryContext, IMixinWolfEntityModel, IMixinWolfEntityRenderState, IMixinWolfEntityRenderer, EntityRendererAccessor<T, S> {
+public abstract class LivingEntityRendererClientMixin<T extends LivingEntity, S extends LivingEntityRenderState, M extends EntityModel<? super S>> extends EntityRenderer<T, S> implements FeatureRendererContext<S, M>, EntityRendererAccessor<T, S> {
     @Unique
     private EntityRendererFactory.Context entityRendererFactoryContext;
 
@@ -69,8 +70,8 @@ public abstract class LivingEntityRendererClientMixin<T extends LivingEntity, S 
             return;
         }
 
-        this.mrdogs_mod$setEntityRendererFactoryContext(context);
-        this.mrdogs_mod$setWolfEntityModel(new WolfEntityModel(this.mrdogs_mod$getEntityRendererFactoryContext().getPart(EntityModelLayers.WOLF)));
+        this.entityRendererFactoryContext = context;
+        this.wolfEntityModel = new WolfEntityModel(this.entityRendererFactoryContext.getPart(EntityModelLayers.WOLF));
         WolfEntityRenderState state = new WolfEntityRenderState();
         state.angerTime = false;
         state.inSittingPose = false;
@@ -81,10 +82,10 @@ public abstract class LivingEntityRendererClientMixin<T extends LivingEntity, S 
         state.furWetBrightnessMultiplier = 1.0F;
         state.collarColor = DyeColor.RED;
         state.bodyArmor = ItemStack.EMPTY;
-        this.mrdogs_mod$setWolfEntityRenderState(state);
-        this.mrdogs_mod$setWolfEntityRenderer(new WolfEntityRenderer(this.mrdogs_mod$getEntityRendererFactoryContext()));
-        this.wolfArmorFeatureRenderer = new WolfArmorFeatureRenderer(this.mrdogs_mod$getWolfEntityRenderer(), this.mrdogs_mod$getEntityRendererFactoryContext().getEntityModels(), this.mrdogs_mod$getEntityRendererFactoryContext().getEquipmentRenderer());
-        this.wolfCollarFeatureRenderer = new WolfCollarFeatureRenderer(this.mrdogs_mod$getWolfEntityRenderer());
+        this.wolfEntityRenderState = state;
+        this.wolfEntityRenderer = new WolfEntityRenderer(this.entityRendererFactoryContext);
+        this.wolfArmorFeatureRenderer = new WolfArmorFeatureRenderer(this.wolfEntityRenderer, this.entityRendererFactoryContext.getEntityModels(), this.entityRendererFactoryContext.getEquipmentRenderer());
+        this.wolfCollarFeatureRenderer = new WolfCollarFeatureRenderer(this.wolfEntityRenderer);
     }
 
     @Redirect(method = "render(Lnet/minecraft/client/render/entity/state/LivingEntityRenderState;Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V", at = @At(
@@ -96,26 +97,26 @@ public abstract class LivingEntityRendererClientMixin<T extends LivingEntity, S 
             return;
         }
 
-        this.mrdogs_mod$getWolfEntityRenderState().inSittingPose = IS_SNEAKING;
-        this.mrdogs_mod$getWolfEntityModel().setAngles(this.mrdogs_mod$getWolfEntityRenderState());
+        this.wolfEntityRenderState.inSittingPose = IS_SNEAKING;
+        this.wolfEntityModel.setAngles(this.wolfEntityRenderState);
 
-        ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getLeftFrontLeg().pitch = ((PlayerEntityModel) instance).leftLeg.pitch;
-        ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getLeftHindLeg().pitch = ((PlayerEntityModel) instance).leftLeg.pitch;
-        ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getRightFrontLeg().pitch = ((PlayerEntityModel) instance).rightLeg.pitch;
-        ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getRightHindLeg().pitch = ((PlayerEntityModel) instance).rightLeg.pitch;
-        ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getLeftFrontLeg().yaw = ((PlayerEntityModel) instance).leftLeg.yaw;
-        ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getLeftHindLeg().yaw = ((PlayerEntityModel) instance).leftLeg.yaw;
-        ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getRightFrontLeg().yaw = ((PlayerEntityModel) instance).rightLeg.yaw;
-        ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getRightHindLeg().yaw = ((PlayerEntityModel) instance).rightLeg.yaw;
+        ((WolfEntityModelAccessor) this.wolfEntityModel).getLeftFrontLeg().pitch = ((PlayerEntityModel) instance).leftLeg.pitch;
+        ((WolfEntityModelAccessor) this.wolfEntityModel).getLeftHindLeg().pitch = ((PlayerEntityModel) instance).leftLeg.pitch;
+        ((WolfEntityModelAccessor) this.wolfEntityModel).getRightFrontLeg().pitch = ((PlayerEntityModel) instance).rightLeg.pitch;
+        ((WolfEntityModelAccessor) this.wolfEntityModel).getRightHindLeg().pitch = ((PlayerEntityModel) instance).rightLeg.pitch;
+        ((WolfEntityModelAccessor) this.wolfEntityModel).getLeftFrontLeg().yaw = ((PlayerEntityModel) instance).leftLeg.yaw;
+        ((WolfEntityModelAccessor) this.wolfEntityModel).getLeftHindLeg().yaw = ((PlayerEntityModel) instance).leftLeg.yaw;
+        ((WolfEntityModelAccessor) this.wolfEntityModel).getRightFrontLeg().yaw = ((PlayerEntityModel) instance).rightLeg.yaw;
+        ((WolfEntityModelAccessor) this.wolfEntityModel).getRightHindLeg().yaw = ((PlayerEntityModel) instance).rightLeg.yaw;
         // i don't know how minecraft generates this value so i'm just taking a similar one
-        ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getTail().yaw = ((PlayerEntityModel) instance).leftLeg.pitch * 0.7F;
-        ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getHead().pitch = livingEntityRenderState.pitch * ((float)Math.PI / 180F);
-        ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getHead().yaw = livingEntityRenderState.yawDegrees * ((float)Math.PI / 180F);
-        ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getHead().roll = ((PlayerEntityModel) instance).head.roll;
+        ((WolfEntityModelAccessor) this.wolfEntityModel).getTail().yaw = ((PlayerEntityModel) instance).leftLeg.pitch * 0.7F;
+        ((WolfEntityModelAccessor) this.wolfEntityModel).getHead().pitch = livingEntityRenderState.pitch * ((float)Math.PI / 180F);
+        ((WolfEntityModelAccessor) this.wolfEntityModel).getHead().yaw = livingEntityRenderState.yawDegrees * ((float)Math.PI / 180F);
+        ((WolfEntityModelAccessor) this.wolfEntityModel).getHead().roll = ((PlayerEntityModel) instance).head.roll;
 
-        this.mrdogs_mod$getWolfEntityModel().render(matrixStack, vertexConsumer, light, overlay, color);
-        this.wolfArmorFeatureRenderer.render(matrixStack, vertexConsumerProvider, light, this.mrdogs_mod$getWolfEntityRenderState(), this.mrdogs_mod$getWolfEntityRenderState().yawDegrees, this.mrdogs_mod$getWolfEntityRenderState().pitch);
-        this.wolfCollarFeatureRenderer.render(matrixStack, vertexConsumerProvider, light, this.mrdogs_mod$getWolfEntityRenderState(), this.mrdogs_mod$getWolfEntityRenderState().yawDegrees, this.mrdogs_mod$getWolfEntityRenderState().pitch);
+        this.wolfEntityModel.render(matrixStack, vertexConsumer, light, overlay, color);
+        this.wolfArmorFeatureRenderer.render(matrixStack, vertexConsumerProvider, light, this.wolfEntityRenderState, this.wolfEntityRenderState.yawDegrees, this.wolfEntityRenderState.pitch);
+        this.wolfCollarFeatureRenderer.render(matrixStack, vertexConsumerProvider, light, this.wolfEntityRenderState, this.wolfEntityRenderState.yawDegrees, this.wolfEntityRenderState.pitch);
         /*
             data:  x_move = -0.03
             y_move = 0.23
@@ -129,11 +130,11 @@ public abstract class LivingEntityRendererClientMixin<T extends LivingEntity, S 
         //        matrixStack.push();
 //        matrixStack.translate(X_MOVE, Y_MOVE, Z_MOVE);
 //        matrixStack.push();
-//        matrixStack.multiply(RotationAxis.POSITIVE_X.rotation(((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getHead().pitch));
+//        matrixStack.multiply(RotationAxis.POSITIVE_X.rotation(((WolfEntityModelAccessor) this.wolfEntityModel).getHead().pitch));
 //        LOGGER.info("X_MOVE = {}, Y_MOVE = {}, Z_MOVE = {}", X_MOVE, Y_MOVE, Z_MOVE);
 //        LOGGER.info("X_ROT = {}, Y_ROT = {}, Z_ROT = {}", 0, Y_ROTATION, Z_ROTATION);
-//        LOGGER.info("head.pitch = {}, head.yaw = {}, head.roll = {}", ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getHead().pitch, ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getHead().yaw, ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getHead().roll);
-//        Utils.renderFoxHoldItem(matrixStack, vertexConsumerProvider, light, Items.BONE.getDefaultStack(), Z_ROTATION, 0, Y_ROTATION, ((WolfEntityModelAccessor) this.mrdogs_mod$getWolfEntityModel()).getHead());
+//        LOGGER.info("head.pitch = {}, head.yaw = {}, head.roll = {}", ((WolfEntityModelAccessor) this.wolfEntityModel).getHead().pitch, ((WolfEntityModelAccessor) this.wolfEntityModel).getHead().yaw, ((WolfEntityModelAccessor) this.wolfEntityModel).getHead().roll);
+//        Utils.renderFoxHoldItem(matrixStack, vertexConsumerProvider, light, Items.BONE.getDefaultStack(), Z_ROTATION, 0, Y_ROTATION, ((WolfEntityModelAccessor) this.wolfEntityModel).getHead());
 //        matrixStack.pop();
 //        matrixStack.pop();
     }
@@ -168,43 +169,5 @@ public abstract class LivingEntityRendererClientMixin<T extends LivingEntity, S 
         }
 
         return playerEntityRenderState.name.equals(MC.player.getGameProfile().getName());
-    }
-
-    @Override
-    public EntityRendererFactory.Context mrdogs_mod$getEntityRendererFactoryContext() {
-        return entityRendererFactoryContext;
-    }
-
-    @Override
-    public void mrdogs_mod$setEntityRendererFactoryContext(EntityRendererFactory.Context entityRendererFactoryContext) {
-        this.entityRendererFactoryContext = entityRendererFactoryContext;
-    }
-
-    @Override
-    public WolfEntityModel mrdogs_mod$getWolfEntityModel() {
-        return wolfEntityModel;
-    }
-
-    @Override
-    public void mrdogs_mod$setWolfEntityModel(WolfEntityModel wolfEntityModel) {
-        this.wolfEntityModel = wolfEntityModel;
-    }
-    @Override
-    public WolfEntityRenderState mrdogs_mod$getWolfEntityRenderState() {
-        return this.wolfEntityRenderState;
-    }
-
-    @Override
-    public void mrdogs_mod$setWolfEntityRenderState(WolfEntityRenderState wolfEntityRenderState) {
-        this.wolfEntityRenderState = wolfEntityRenderState;
-    }
-    @Override
-    public WolfEntityRenderer mrdogs_mod$getWolfEntityRenderer() {
-        return this.wolfEntityRenderer;
-    }
-
-    @Override
-    public void mrdogs_mod$setWolfEntityRenderer(WolfEntityRenderer renderer) {
-        this.wolfEntityRenderer = renderer;
     }
 }

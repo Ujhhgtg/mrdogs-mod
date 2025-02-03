@@ -1,6 +1,7 @@
 package dev.ujhhgtg.mrdogsmod;
 
 import com.github.promeg.pinyinhelper.Pinyin;
+import dev.ujhhgtg.mrdogsmod.commands.MrDogsCommand;
 import net.fabricmc.fabric.api.event.player.AttackBlockCallback;
 import net.fabricmc.fabric.api.event.player.AttackEntityCallback;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
@@ -163,27 +164,7 @@ public class MrDogsModClient implements ClientModInitializer {
         LOGGER.info("6 - Random blindness effect");
         // done in LivingEntityClientMixin
 
-        LOGGER.info("7 - Register config screen command");
-//        ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
-//            dispatcher.register(
-//                    ClientCommandManager.literal("mrdogsmod_config")
-//                            .executes(context -> {
-////                                        MinecraftClient client = context.getSource().getClient();
-////                                    client.execute(() -> client.setScreen(ConfigScreen.create(CONFIG, client.currentScreen)));
-//                                        context.getSource().sendFeedback(Text.literal("invoked mrdogsmod_config"));
-//                                        return 1;
-//                                    }
-//                            ));
-//
-//            dispatcher.register(
-//                    ClientCommandManager.literal("mrdogsmod_fakedeath")
-//                            .executes(context -> {
-//                                MinecraftClient client = context.getSource().getClient();
-//                                client.execute(() -> client.setScreen(new DeathScreen(Text.literal("###FAKE_DEATH_SCREEN###"), false)));
-//                                context.getSource().sendFeedback(Text.literal("invoked mrdogsmod_fakedeath"));
-//                                return 1;
-//                            })
-//            );
-//        });
+        LOGGER.info("7 - Register commands");
+        MrDogsCommand.init();
     }
 }
